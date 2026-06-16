@@ -1,0 +1,1376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NodePath — Deep Node.js Guide for Interviews & Mastery</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<!-- ====================== NAV ====================== -->
+<nav id="navbar">
+  <div class="nav-inner">
+    <div class="nav-logo">
+      <span class="logo-hex">⬡</span>
+      <span>Node<span class="green">Path</span></span>
+    </div>
+    <div class="nav-center">
+      <a href="#basics" class="nl">🌱 Basics</a>
+      <a href="#intermediate" class="nl">⚡ Intermediate</a>
+      <a href="#advanced" class="nl">🔥 Advanced</a>
+      <a href="#interview" class="nl">🎯 Interview</a>
+      <a href="#videos" class="nl">▶️ Videos</a>
+    </div>
+    <div class="nav-right">
+      <span class="badge-interview">Interview Ready</span>
+    </div>
+  </div>
+</nav>
+
+<!-- ====================== HERO ====================== -->
+<section class="hero">
+  <div class="hero-glow g1"></div>
+  <div class="hero-glow g2"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-body">
+    <div class="hero-left">
+      <div class="chip"><span class="chipdot"></span> Updated for Node.js 22 · 2026</div>
+      <h1>Master Node.js.<br/><span class="grad">Interview-ready.</span></h1>
+      <p class="hero-p">Deep explanations, real code, mental models, common gotchas, and every interview question that actually gets asked — at Beginner, Intermediate, and Advanced levels.</p>
+      <div class="hero-pills">
+        <a href="#basics"       class="pill p-green">🌱 Start from Basics</a>
+        <a href="#intermediate" class="pill p-amber">⚡ Jump to Intermediate</a>
+        <a href="#interview"    class="pill p-red">🎯 Interview Prep</a>
+      </div>
+      <div class="hero-counters">
+        <div class="hc"><span class="hcn">25+</span><span class="hcl">Deep Concepts</span></div>
+        <div class="hcd"></div>
+        <div class="hc"><span class="hcn">60+</span><span class="hcl">Interview Q&amp;A</span></div>
+        <div class="hcd"></div>
+        <div class="hc"><span class="hcn">3</span><span class="hcl">Skill Levels</span></div>
+      </div>
+    </div>
+    <div class="hero-right">
+      <div class="term">
+        <div class="term-bar">
+          <span class="td r"></span><span class="td y"></span><span class="td g"></span>
+          <span class="tname">node — server.js</span>
+        </div>
+        <div class="term-body">
+          <div class="tl"><span class="tp">$</span> <span class="tc type-me">node server.js</span></div>
+          <div class="tl tout" id="o1"></div>
+          <div class="tl tout" id="o2"></div>
+          <div class="tl tout" id="o3"></div>
+          <div class="tl tout" id="o4"></div>
+          <div class="tl tout" id="o5"></div>
+          <div class="tcursor">█</div>
+        </div>
+      </div>
+      <div class="hero-note">
+        <span class="hn-icon">💡</span>
+        <span>Node.js handles <strong>10,000+ concurrent connections</strong> on a single thread using the Event Loop — this is why it powers Netflix, LinkedIn, and Uber.</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ====================== HOW NODE WORKS - BIG PICTURE ====================== -->
+<section class="big-picture">
+  <div class="container">
+    <div class="sec-label">The Mental Model</div>
+    <h2 class="sec-title">How Node.js Actually Works</h2>
+    <p class="sec-sub">Before writing a single line of code, you need to understand this. Everything else is built on top of it.</p>
+
+    <div class="bp-grid">
+      <div class="bp-card">
+        <div class="bpn">01</div>
+        <div class="bpi">🧠</div>
+        <h3>Single-Threaded JS</h3>
+        <p>Your JavaScript code runs on <strong>one thread</strong>. There's only one call stack. Operations happen one at a time — but Node.js is not slow because of this.</p>
+        <div class="bp-why">Why this matters in interviews: Interviewers want to know you understand that <em>blocking the main thread kills performance</em>.</div>
+      </div>
+      <div class="bp-card">
+        <div class="bpn">02</div>
+        <div class="bpi">⚙️</div>
+        <h3>libuv Thread Pool</h3>
+        <p>Heavy I/O work (disk, DNS, crypto) is handed off to <strong>libuv's C++ thread pool</strong> (4 threads by default). The JS thread is free while libuv works in the background.</p>
+        <div class="bp-why">Why this matters: Node.js isn't truly single-threaded — it's single-threaded <em>for JS</em>, but multi-threaded for I/O.</div>
+      </div>
+      <div class="bp-card">
+        <div class="bpn">03</div>
+        <div class="bpi">🔁</div>
+        <h3>Event Loop</h3>
+        <p>The Event Loop continuously checks: "Is the call stack empty? Are there callbacks ready?" If yes, it pushes them in. This is how thousands of async operations are managed.</p>
+        <div class="bp-why">Why this matters: This is the #1 interview topic. Know the phases, microtasks vs macrotasks, and what blocks it.</div>
+      </div>
+      <div class="bp-card">
+        <div class="bpn">04</div>
+        <div class="bpi">🚀</div>
+        <h3>V8 Engine</h3>
+        <p>Google's V8 compiles JavaScript to machine code (JIT). It handles garbage collection, memory management, and optimizations that make Node fast.</p>
+        <div class="bp-why">Why this matters: Memory leaks, performance profiling, and heap issues all trace back to V8 internals.</div>
+      </div>
+    </div>
+
+    <!-- ARCHITECTURE VISUAL -->
+    <div class="arch-vis">
+      <div class="av-title">Node.js Architecture — How your code flows</div>
+      <div class="av-flow">
+        <div class="av-col">
+          <div class="av-box av-js">
+            <div class="av-box-label">Your JavaScript</div>
+            <div class="av-items">
+              <div class="av-item">app.js</div>
+              <div class="av-item">async functions</div>
+              <div class="av-item">Promises</div>
+            </div>
+          </div>
+        </div>
+        <div class="av-arr">→</div>
+        <div class="av-col">
+          <div class="av-box av-v8">
+            <div class="av-box-label">V8 Engine</div>
+            <div class="av-items">
+              <div class="av-item">JIT compile</div>
+              <div class="av-item">Heap memory</div>
+              <div class="av-item">GC</div>
+            </div>
+          </div>
+        </div>
+        <div class="av-arr">→</div>
+        <div class="av-col">
+          <div class="av-box av-el">
+            <div class="av-box-label">Event Loop <span class="spin-badge">spinning</span></div>
+            <div class="av-items">
+              <div class="av-item">timers</div>
+              <div class="av-item">I/O callbacks</div>
+              <div class="av-item">poll</div>
+              <div class="av-item">check</div>
+            </div>
+          </div>
+        </div>
+        <div class="av-arr">→</div>
+        <div class="av-col">
+          <div class="av-box av-libuv">
+            <div class="av-box-label">libuv</div>
+            <div class="av-items">
+              <div class="av-item">Thread Pool (×4)</div>
+              <div class="av-item">OS async</div>
+              <div class="av-item">Network</div>
+            </div>
+          </div>
+        </div>
+        <div class="av-arr">→</div>
+        <div class="av-col">
+          <div class="av-box av-os">
+            <div class="av-box-label">OS / Kernel</div>
+            <div class="av-items">
+              <div class="av-item">File System</div>
+              <div class="av-item">TCP/UDP</div>
+              <div class="av-item">DNS</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ====================== BASICS ====================== -->
+<section id="basics" class="level-sec basics-sec">
+  <div class="container">
+    <div class="level-head">
+      <div class="lbadge lb-green">🌱 Beginner</div>
+      <h2>The Fundamentals — Understood Deeply</h2>
+      <p>Not just "what" — but <em>why</em> it works, what happens under the hood, and what interviewers are actually testing.</p>
+      <div class="ltime">⏱ 2–4 weeks · Questions tagged with 🎯 appear in interviews</div>
+    </div>
+
+    <!-- CONCEPT: Modules -->
+    <div class="concept-block" id="c-modules">
+      <div class="cb-header">
+        <div class="cb-num">01</div>
+        <div class="cb-icon">📦</div>
+        <div class="cb-meta">
+          <h3>Modules: CommonJS vs ES Modules</h3>
+          <div class="cb-tags"><span class="ct">require</span><span class="ct">import</span><span class="ct">module.exports</span><span class="ct">package.json</span></div>
+        </div>
+        <button class="cb-toggle" onclick="toggle(this)">Expand ↓</button>
+      </div>
+      <div class="cb-body">
+        <div class="cb-explain">
+          <h4>The Deep Explanation</h4>
+          <p>Node.js has two module systems that work very differently. Understanding both is critical because most real codebases use one or the other, and mixing them causes painful bugs.</p>
+          <p><strong>CommonJS (CJS)</strong> — the original Node module system. When you call <code>require('./math')</code>, Node reads the file, wraps it in a function, executes it, and returns whatever was assigned to <code>module.exports</code>. It's <strong>synchronous</strong> — the file is read and executed before the next line runs. This is fine for startup, but terrible inside an async operation.</p>
+          <p><strong>ES Modules (ESM)</strong> — the JavaScript standard. Uses <code>import/export</code>. Key difference: ESM is <strong>statically analyzed at parse time</strong>, meaning the browser/Node can know all imports before any code runs. This enables tree-shaking (dead code elimination) and top-level await. Set <code>"type": "module"</code> in package.json, or use .mjs extension.</p>
+          <div class="callout callout-warn">
+            <span class="co-icon">⚠️</span>
+            <div><strong>Gotcha:</strong> You can't <code>require()</code> an ES module. And you can't use <code>import</code> inside a CJS file. They don't mix directly. Use dynamic <code>import()</code> to load ESM from CJS.</div>
+          </div>
+        </div>
+        <div class="cb-code-wrap">
+          <div class="code-tabs">
+            <button class="ctab active" onclick="switchTab(this,'cjs')">CommonJS</button>
+            <button class="ctab" onclick="switchTab(this,'esm')">ES Modules</button>
+            <button class="ctab" onclick="switchTab(this,'dynamic')">Dynamic Import</button>
+          </div>
+          <div class="code-panel active" id="tab-cjs">
+<pre><span class="cc">// math.js — CommonJS export</span>
+<span class="ck">function</span> <span class="cf">add</span>(a, b) { <span class="ck">return</span> a + b; }
+<span class="ck">function</span> <span class="cf">multiply</span>(a, b) { <span class="ck">return</span> a * b; }
+
+module.exports = { add, multiply };
+<span class="cc">// OR: exports.add = add; (same thing)</span>
+
+<span class="cc">// app.js — CommonJS import</span>
+<span class="ck">const</span> { add, multiply } = <span class="cf">require</span>(<span class="cs">"./math"</span>);
+<span class="ck">const</span> path = <span class="cf">require</span>(<span class="cs">"path"</span>);   <span class="cc">// built-in</span>
+<span class="ck">const</span> express = <span class="cf">require</span>(<span class="cs">"express"</span>); <span class="cc">// npm package</span>
+
+<span class="cf">console</span>.<span class="cm">log</span>(add(2, 3)); <span class="cc">// 5</span>
+
+<span class="cc">// What require() actually does under the hood:</span>
+<span class="cc">// 1. Resolves file path</span>
+<span class="cc">// 2. Checks module cache (re-requires are fast!)</span>
+<span class="cc">// 3. Wraps in: (function(exports, require, module, __filename, __dirname) { ... })</span>
+<span class="cc">// 4. Executes the wrapper</span>
+<span class="cc">// 5. Returns module.exports</span></pre>
+          </div>
+          <div class="code-panel" id="tab-esm">
+<pre><span class="cc">// math.mjs — ES Module export</span>
+<span class="ck">export function</span> <span class="cf">add</span>(a, b) { <span class="ck">return</span> a + b; }
+<span class="ck">export const</span> PI = 3.14159;
+
+<span class="cc">// Named default export</span>
+<span class="ck">export default</span> { add, PI };
+
+<span class="cc">// app.mjs — ES Module import</span>
+<span class="ck">import</span> { add } <span class="ck">from</span> <span class="cs">"./math.mjs"</span>;       <span class="cc">// named</span>
+<span class="ck">import</span> math <span class="ck">from</span> <span class="cs">"./math.mjs"</span>;           <span class="cc">// default</span>
+<span class="ck">import</span> * <span class="ck">as</span> all <span class="ck">from</span> <span class="cs">"./math.mjs"</span>;      <span class="cc">// namespace</span>
+<span class="ck">import</span> { createServer } <span class="ck">from</span> <span class="cs">"node:http"</span>; <span class="cc">// built-in (node: prefix)</span>
+
+<span class="cc">// Top-level await — only available in ESM!</span>
+<span class="ck">const</span> data = <span class="ck">await</span> fetch(<span class="cs">"https://api.example.com/data"</span>);
+
+<span class="cc">// package.json — enable ESM project-wide</span>
+<span class="cc">// { "type": "module" }</span></pre>
+          </div>
+          <div class="code-panel" id="tab-dynamic">
+<pre><span class="cc">// Dynamic import() — works in both CJS and ESM</span>
+<span class="cc">// Use when you need to load a module conditionally</span>
+<span class="ck">async function</span> <span class="cf">loadPlugin</span>(name) {
+  <span class="ck">const</span> plugin = <span class="ck">await</span> <span class="ck">import</span>(<span class="cs">`./plugins/<span class="cv">${name}</span>.mjs`</span>);
+  <span class="ck">return</span> plugin.<span class="ck">default</span>;
+}
+
+<span class="cc">// In CJS — load an ES module this way:</span>
+<span class="cc">// const { add } = await import('./math.mjs'); ✅</span>
+<span class="cc">// const { add } = require('./math.mjs');      ❌ throws!</span>
+
+<span class="cc">// Real use case: lazy load heavy libraries</span>
+app.<span class="cm">get</span>(<span class="cs">"/pdf"</span>, <span class="ck">async</span> (req, res) => {
+  <span class="ck">const</span> { generatePDF } = <span class="ck">await</span> <span class="ck">import</span>(<span class="cs">"./pdf-generator.mjs"</span>);
+  res.<span class="cm">send</span>(<span class="ck">await</span> <span class="cf">generatePDF</span>(req.body));
+});</pre>
+          </div>
+        </div>
+        <div class="interview-box">
+          <div class="ib-title">🎯 Interview Questions — Modules</div>
+          <div class="iq-list">
+            <div class="iq">
+              <div class="iq-q">Q: What's the difference between CommonJS and ES Modules?</div>
+              <div class="iq-a">A: CJS uses <code>require()</code>/exports and is synchronous — the whole file runs at require time. ESM uses <code>import</code>/export and is statically analyzed — imports are resolved before execution, enabling tree-shaking and top-level await. CJS is the Node.js default; ESM requires <code>"type":"module"</code> or .mjs extension.</div>
+            </div>
+            <div class="iq">
+              <div class="iq-q">Q: Why can't you use <code>require()</code> inside an if statement effectively?</div>
+              <div class="iq-a">A: You can, but it defeats the purpose — <code>require()</code> is synchronous so it blocks. For conditional loading, use dynamic <code>import()</code> which is async and doesn't block the event loop.</div>
+            </div>
+            <div class="iq">
+              <div class="iq-q">Q: How does Node.js module caching work?</div>
+              <div class="iq-a">A: After a module is first <code>required</code>, Node caches it in <code>require.cache</code>. Subsequent <code>require()</code> calls return the cached object without re-executing the file. This means module-level state (like a database connection) is shared across all importers — a common pattern for singletons.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CONCEPT: Event Loop DEEP -->
+    <div class="concept-block" id="c-eventloop">
+      <div class="cb-header">
+        <div class="cb-num">02</div>
+        <div class="cb-icon">🔁</div>
+        <div class="cb-meta">
+          <h3>The Event Loop — Every Phase Explained</h3>
+          <div class="cb-tags"><span class="ct">libuv</span><span class="ct">microtasks</span><span class="ct">macrotasks</span><span class="ct">nextTick</span><span class="ct">Promises</span></div>
+        </div>
+        <button class="cb-toggle" onclick="toggle(this)">Expand ↓</button>
+      </div>
+      <div class="cb-body">
+        <div class="cb-explain">
+          <h4>The Deep Explanation</h4>
+          <p>The Event Loop is a continuous loop that runs while your Node process is alive. It has <strong>6 phases</strong>, each with its own FIFO queue. The loop goes through each phase in order, processing callbacks from that queue before moving to the next.</p>
+
+          <div class="phases-vis">
+            <div class="phase ph-timers">
+              <div class="ph-name">① Timers</div>
+              <div class="ph-detail">Runs callbacks scheduled by <code>setTimeout()</code> and <code>setInterval()</code> whose threshold has passed</div>
+            </div>
+            <div class="ph-arrow">↓</div>
+            <div class="phase ph-pending">
+              <div class="ph-name">② Pending Callbacks</div>
+              <div class="ph-detail">I/O callbacks deferred from the previous loop iteration (e.g. TCP errors)</div>
+            </div>
+            <div class="ph-arrow">↓</div>
+            <div class="phase ph-idle">
+              <div class="ph-name">③ Idle / Prepare</div>
+              <div class="ph-detail">Internal use only. libuv housekeeping</div>
+            </div>
+            <div class="ph-arrow">↓</div>
+            <div class="phase ph-poll active-phase">
+              <div class="ph-name">④ Poll ← Most important</div>
+              <div class="ph-detail">Retrieves new I/O events. Executes I/O callbacks (file reads, network responses). Blocks here if the queue is empty and timers aren't ready</div>
+            </div>
+            <div class="ph-arrow">↓</div>
+            <div class="phase ph-check">
+              <div class="ph-name">⑤ Check</div>
+              <div class="ph-detail">Executes <code>setImmediate()</code> callbacks — always runs after poll, before timers</div>
+            </div>
+            <div class="ph-arrow">↓</div>
+            <div class="phase ph-close">
+              <div class="ph-name">⑥ Close Callbacks</div>
+              <div class="ph-detail">Cleanup callbacks: <code>socket.on('close')</code>, <code>server.close()</code></div>
+            </div>
+          </div>
+
+          <div class="microtask-box">
+            <div class="mt-title">⚡ Microtasks — Run Between EVERY Phase</div>
+            <p>After each phase (and between individual callbacks within a phase), Node drains two microtask queues in order:</p>
+            <div class="mt-order">
+              <div class="mt-item mt-nexttick"><strong>1. process.nextTick()</strong> — runs first, before Promises</div>
+              <div class="mt-arr">then</div>
+              <div class="mt-item mt-promise"><strong>2. Promise .then/.catch</strong> — runs after nextTick queue is empty</div>
+            </div>
+          </div>
+
+          <div class="callout callout-danger">
+            <span class="co-icon">🚨</span>
+            <div><strong>Critical Gotcha:</strong> <code>process.nextTick()</code> is NOT part of the Event Loop phases. It runs immediately after the current operation completes, before the next phase. Calling <code>nextTick</code> recursively <em>starves</em> the event loop — I/O never gets a chance to run!</div>
+          </div>
+        </div>
+        <div class="cb-code-wrap">
+          <div class="code-tabs">
+            <button class="ctab active" onclick="switchTab(this,'el-order')">Execution Order</button>
+            <button class="ctab" onclick="switchTab(this,'el-block')">What Blocks It</button>
+            <button class="ctab" onclick="switchTab(this,'el-immed')">setImmediate vs setTimeout</button>
+          </div>
+          <div class="code-panel active" id="tab-el-order">
+<pre><span class="cf">console</span>.<span class="cm">log</span>(<span class="cs">"1: sync — runs immediately"</span>);
+
+process.<span class="cm">nextTick</span>(() => <span class="cf">console</span>.<span class="cm">log</span>(<span class="cs">"2: nextTick — before Promises"</span>));
+
+Promise.<span class="cm">resolve</span>().<span class="cm">then</span>(() => <span class="cf">console</span>.<span class="cm">log</span>(<span class="cs">"3: Promise microtask"</span>));
+
+<span class="cf">setTimeout</span>(() => <span class="cf">console</span>.<span class="cm">log</span>(<span class="cs">"5: setTimeout — macrotask"</span>), 0);
+
+<span class="cf">setImmediate</span>(() => <span class="cf">console</span>.<span class="cm">log</span>(<span class="cs">"4: setImmediate — check phase"</span>));
+
+<span class="cf">console</span>.<span class="cm">log</span>(<span class="cs">"6: sync — end of script"</span>);
+
+<span class="cc">// ACTUAL OUTPUT ORDER:
+// 1: sync — runs immediately
+// 6: sync — end of script
+// 2: nextTick — before Promises    ← microtask queue 1
+// 3: Promise microtask             ← microtask queue 2
+// 4: setImmediate — check phase    ← check phase (usually before setTimeout)
+// 5: setTimeout — macrotask        ← timers phase</span></pre>
+          </div>
+          <div class="code-panel" id="tab-el-block">
+<pre><span class="cc">// ❌ BLOCKING — never do this in production</span>
+app.<span class="cm">get</span>(<span class="cs">"/slow"</span>, (req, res) => {
+  <span class="cc">// This blocks the ENTIRE event loop for all users!</span>
+  <span class="ck">const</span> start = Date.<span class="cm">now</span>();
+  <span class="ck">while</span> (Date.<span class="cm">now</span>() - start < 2000) {} <span class="cc">// 2 second CPU burn</span>
+  res.<span class="cm">end</span>(<span class="cs">"done"</span>);
+});
+
+<span class="cc">// ✅ Non-blocking — offload CPU work to Worker Thread</span>
+<span class="ck">const</span> { Worker } = <span class="cf">require</span>(<span class="cs">"worker_threads"</span>);
+app.<span class="cm">get</span>(<span class="cs">"/fast"</span>, (req, res) => {
+  <span class="ck">const</span> worker = <span class="ck">new</span> <span class="cf">Worker</span>(<span class="cs">"./heavy-task.js"</span>);
+  worker.<span class="cm">on</span>(<span class="cs">"message"</span>, result => res.<span class="cm">json</span>(result));
+});
+
+<span class="cc">// ✅ fs.readFile is async — doesn't block</span>
+app.<span class="cm">get</span>(<span class="cs">"/file"</span>, <span class="ck">async</span> (req, res) => {
+  <span class="ck">const</span> data = <span class="ck">await</span> fs.<span class="cm">readFile</span>(<span class="cs">"./data.json"</span>, <span class="cs">"utf-8"</span>);
+  <span class="cc">// ^^ handed to libuv thread pool, event loop is FREE</span>
+  res.<span class="cm">json</span>(JSON.<span class="cm">parse</span>(data));
+});</pre>
+          </div>
+          <div class="code-panel" id="tab-el-immed">
+<pre><span class="cc">// setImmediate vs setTimeout(fn, 0) — the classic interview trick</span>
+
+<span class="cc">// Outside of I/O context: order is NON-DETERMINISTIC</span>
+<span class="cf">setTimeout</span>(() => <span class="cf">console</span>.<span class="cm">log</span>(<span class="cs">"timeout"</span>), 0);
+<span class="cf">setImmediate</span>(() => <span class="cf">console</span>.<span class="cm">log</span>(<span class="cs">"immediate"</span>));
+<span class="cc">// Could print either order — depends on system timer precision</span>
+
+<span class="cc">// Inside an I/O callback: setImmediate ALWAYS wins</span>
+fs.<span class="cm">readFile</span>(<span class="cs">"file.txt"</span>, () => {
+  <span class="cf">setTimeout</span>(() => <span class="cf">console</span>.<span class="cm">log</span>(<span class="cs">"timeout"</span>), 0);
+  <span class="cf">setImmediate</span>(() => <span class="cf">console</span>.<span class="cm">log</span>(<span class="cs">"immediate"</span>)); <span class="cc">// ← always first</span>
+  <span class="cc">// Why: After I/O callback, we're in "poll" phase.
+  // Next phase is "check" (setImmediate), THEN loop back to "timers"</span>
+});
+
+<span class="cc">// process.nextTick vs setImmediate: choose carefully</span>
+<span class="cf">setImmediate</span>(() => <span class="cf">console</span>.<span class="cm">log</span>(<span class="cs">"after I/O cycle"</span>));
+process.<span class="cm">nextTick</span>(() => <span class="cf">console</span>.<span class="cm">log</span>(<span class="cs">"before I/O cycle"</span>)); <span class="cc">// ← runs first</span></pre>
+          </div>
+        </div>
+        <div class="interview-box">
+          <div class="ib-title">🎯 Interview Questions — Event Loop</div>
+          <div class="iq-list">
+            <div class="iq">
+              <div class="iq-q">Q: Node.js is single-threaded. How does it handle 10,000 concurrent connections?</div>
+              <div class="iq-a">A: Node.js uses a non-blocking I/O model. When an I/O operation (like reading a file or making a network call) is initiated, Node hands it off to libuv's thread pool and continues executing other code. When the I/O completes, the callback is queued and the Event Loop picks it up. This means Node handles many connections by <em>not waiting</em> — it delegates I/O and moves on.</div>
+            </div>
+            <div class="iq">
+              <div class="iq-q">Q: What is the difference between process.nextTick() and setImmediate()?</div>
+              <div class="iq-a">A: <code>process.nextTick()</code> fires before the Event Loop moves to the next phase — it runs in the "microtask queue" after the current operation. <code>setImmediate()</code> fires in the "check" phase of the current loop iteration. Use <code>nextTick</code> for "before I/O" and <code>setImmediate</code> for "after I/O".</div>
+            </div>
+            <div class="iq">
+              <div class="iq-q">Q: What happens if you block the Event Loop?</div>
+              <div class="iq-a">A: Every user request is stuck waiting. Since JS is single-threaded, a synchronous CPU-heavy operation (like a while loop or a huge JSON.parse) freezes the entire application — no I/O callbacks run, no timers fire, no new requests are processed. Fix: offload to Worker Threads or a job queue.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CONCEPT: Async Patterns -->
+    <div class="concept-block" id="c-async">
+      <div class="cb-header">
+        <div class="cb-num">03</div>
+        <div class="cb-icon">⏳</div>
+        <div class="cb-meta">
+          <h3>Async Patterns: Callbacks → Promises → async/await</h3>
+          <div class="cb-tags"><span class="ct">callback hell</span><span class="ct">Promise</span><span class="ct">async/await</span><span class="ct">Promise.all</span><span class="ct">error handling</span></div>
+        </div>
+        <button class="cb-toggle" onclick="toggle(this)">Expand ↓</button>
+      </div>
+      <div class="cb-body">
+        <div class="cb-explain">
+          <h4>The Deep Explanation</h4>
+          <p>Node.js evolved through three generations of async patterns. Understanding all three matters because you'll see all three in real codebases, and interviewers test your ability to convert between them and explain why each exists.</p>
+          <p><strong>Callbacks (Node style)</strong>: The original pattern. Functions take a callback as their last argument. By convention, the callback's first argument is an error (<code>err</code>). Called "error-first callbacks" or "Node-style callbacks". The problem: deep nesting creates "Callback Hell" — impossible to read, debug, or test.</p>
+          <p><strong>Promises</strong>: A Promise is an object representing a future value. It's either <em>pending</em>, <em>fulfilled</em>, or <em>rejected</em>. Promises chain with <code>.then()</code> and <code>.catch()</code> — solving nesting but introducing a new mental model. <code>Promise.all()</code> runs multiple in parallel; <code>Promise.allSettled()</code> waits for all regardless of failure.</p>
+          <p><strong>async/await</strong>: Syntactic sugar over Promises. An <code>async</code> function always returns a Promise. <code>await</code> pauses the function until the Promise resolves — but does NOT block the event loop; Node runs other code while waiting. Always wrap in <code>try/catch</code> — unhandled Promise rejections crash the process in Node 15+.</p>
+          <div class="callout callout-info">
+            <span class="co-icon">💡</span>
+            <div><strong>Mental Model for await:</strong> Think of <code>await</code> as "take a number and sit down." The function pauses, but Node.js goes to serve other customers. When your async work is done, the Event Loop calls your number and resumes from where you left off.</div>
+          </div>
+        </div>
+        <div class="cb-code-wrap">
+          <div class="code-tabs">
+            <button class="ctab active" onclick="switchTab(this,'cb-hell')">Callback Hell</button>
+            <button class="ctab" onclick="switchTab(this,'promises')">Promises</button>
+            <button class="ctab" onclick="switchTab(this,'aw')">async/await</button>
+            <button class="ctab" onclick="switchTab(this,'parallel')">Parallel Execution</button>
+          </div>
+          <div class="code-panel active" id="tab-cb-hell">
+<pre><span class="cc">// ❌ Callback Hell — "Pyramid of Doom"</span>
+<span class="cf">getUser</span>(userId, (err, user) => {
+  <span class="ck">if</span> (err) <span class="ck">return</span> <span class="cf">handleError</span>(err);
+  <span class="cf">getPosts</span>(user.id, (err, posts) => {
+    <span class="ck">if</span> (err) <span class="ck">return</span> <span class="cf">handleError</span>(err);
+    <span class="cf">getComments</span>(posts[0].id, (err, comments) => {
+      <span class="ck">if</span> (err) <span class="ck">return</span> <span class="cf">handleError</span>(err);
+      <span class="cf">saveReport</span>({ user, posts, comments }, (err, result) => {
+        <span class="ck">if</span> (err) <span class="ck">return</span> <span class="cf">handleError</span>(err);
+        <span class="cc">// 5 levels deep... 😰</span>
+        <span class="cf">console</span>.<span class="cm">log</span>(<span class="cs">"Done:"</span>, result);
+      });
+    });
+  });
+});</pre>
+          </div>
+          <div class="code-panel" id="tab-promises">
+<pre><span class="cc">// ✅ Promises — flat chaining</span>
+<span class="cf">getUser</span>(userId)
+  .<span class="cm">then</span>(user => <span class="cf">getPosts</span>(user.id))
+  .<span class="cm">then</span>(posts => <span class="cf">getComments</span>(posts[0].id))
+  .<span class="cm">then</span>(comments => <span class="cf">saveReport</span>(comments))
+  .<span class="cm">then</span>(result => <span class="cf">console</span>.<span class="cm">log</span>(<span class="cs">"Done:"</span>, result))
+  .<span class="cm">catch</span>(err => <span class="cf">handleError</span>(err)); <span class="cc">// ONE error handler for all</span>
+
+<span class="cc">// Creating a Promise from scratch</span>
+<span class="ck">function</span> <span class="cf">delay</span>(ms) {
+  <span class="ck">return new</span> Promise((resolve, reject) => {
+    <span class="cf">setTimeout</span>(resolve, ms);
+    <span class="cc">// Call reject(err) to fail the promise</span>
+  });
+}
+
+<span class="cc">// Promisify a callback-based function</span>
+<span class="ck">const</span> { promisify } = <span class="cf">require</span>(<span class="cs">"util"</span>);
+<span class="ck">const</span> readFile = <span class="cf">promisify</span>(fs.readFile);
+<span class="ck">const</span> content = <span class="ck">await</span> <span class="cf">readFile</span>(<span class="cs">"file.txt"</span>, <span class="cs">"utf-8"</span>);</pre>
+          </div>
+          <div class="code-panel" id="tab-aw">
+<pre><span class="cc">// ✅ async/await — reads like synchronous code</span>
+<span class="ck">async function</span> <span class="cf">loadDashboard</span>(userId) {
+  <span class="ck">try</span> {
+    <span class="ck">const</span> user     = <span class="ck">await</span> <span class="cf">getUser</span>(userId);
+    <span class="ck">const</span> posts    = <span class="ck">await</span> <span class="cf">getPosts</span>(user.id);
+    <span class="ck">const</span> comments = <span class="ck">await</span> <span class="cf">getComments</span>(posts[0].id);
+    <span class="ck">const</span> result   = <span class="ck">await</span> <span class="cf">saveReport</span>({ user, posts, comments });
+    <span class="ck">return</span> result;
+  } <span class="ck">catch</span> (err) {
+    <span class="cc">// Catches ALL errors from any await above</span>
+    <span class="cf">console</span>.<span class="cm">error</span>(<span class="cs">"Dashboard load failed:"</span>, err.message);
+    <span class="ck">throw</span> err; <span class="cc">// Re-throw if caller needs to know</span>
+  }
+}
+
+<span class="cc">// Common mistake: forgetting await → no error catching!</span>
+<span class="ck">async function</span> <span class="cf">bad</span>() {
+  <span class="ck">const</span> data = <span class="cf">fetchUser</span>(); <span class="cc">// ← MISSING await! data = Promise, not value</span>
+}</pre>
+          </div>
+          <div class="code-panel" id="tab-parallel">
+<pre><span class="cc">// Sequential (slow) — each awaits the previous</span>
+<span class="ck">const</span> user    = <span class="ck">await</span> <span class="cf">getUser</span>(id);     <span class="cc">// 100ms</span>
+<span class="ck">const</span> profile = <span class="ck">await</span> <span class="cf">getProfile</span>(id); <span class="cc">// 100ms</span>
+<span class="ck">const</span> posts   = <span class="ck">await</span> <span class="cf">getPosts</span>(id);   <span class="cc">// 100ms</span>
+<span class="cc">// Total: ~300ms</span>
+
+<span class="cc">// ✅ Parallel (fast) — Promise.all starts all at once</span>
+<span class="ck">const</span> [user, profile, posts] = <span class="ck">await</span> Promise.<span class="cm">all</span>([
+  <span class="cf">getUser</span>(id),
+  <span class="cf">getProfile</span>(id),
+  <span class="cf">getPosts</span>(id),
+]);
+<span class="cc">// Total: ~100ms (limited by slowest)</span>
+
+<span class="cc">// Promise.allSettled — don't fail if one rejects</span>
+<span class="ck">const</span> results = <span class="ck">await</span> Promise.<span class="cm">allSettled</span>([fetchA(), fetchB()]);
+results.<span class="cm">forEach</span>(r => {
+  <span class="ck">if</span> (r.status === <span class="cs">"fulfilled"</span>) use(r.value);
+  <span class="ck">else</span> logError(r.reason);
+});
+
+<span class="cc">// Promise.race — first to resolve/reject wins</span>
+<span class="ck">const</span> data = <span class="ck">await</span> Promise.<span class="cm">race</span>([fetch(url), <span class="cf">timeout</span>(5000)]);</pre>
+          </div>
+        </div>
+        <div class="interview-box">
+          <div class="ib-title">🎯 Interview Questions — Async Patterns</div>
+          <div class="iq-list">
+            <div class="iq">
+              <div class="iq-q">Q: Does await block the Node.js event loop?</div>
+              <div class="iq-a">A: No — this is a common misconception. <code>await</code> suspends the <em>current async function</em>, but Node.js is free to run other code (other requests, callbacks, timers) while waiting. It's only blocking if you use synchronous operations like <code>fs.readFileSync()</code>.</div>
+            </div>
+            <div class="iq">
+              <div class="iq-q">Q: What happens when a Promise is rejected and not caught?</div>
+              <div class="iq-a">A: In Node.js 15+, an unhandled Promise rejection crashes the process with exit code 1. In older versions, it emitted a warning. Always handle rejections with <code>.catch()</code> or <code>try/catch</code> with await. Add a global safety net: <code>process.on('unhandledRejection', handler)</code>.</div>
+            </div>
+            <div class="iq">
+              <div class="iq-q">Q: When would you use Promise.all vs Promise.allSettled?</div>
+              <div class="iq-a">A: Use <code>Promise.all</code> when ALL promises must succeed — it rejects immediately if any fail (fail-fast). Use <code>Promise.allSettled</code> when you want to attempt all operations regardless — you get results for each, whether fulfilled or rejected. Example: refreshing multiple API feeds where partial success is acceptable.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ====================== INTERMEDIATE ====================== -->
+<section id="intermediate" class="level-sec intermediate-sec">
+  <div class="container">
+    <div class="level-head">
+      <div class="lbadge lb-amber">⚡ Intermediate</div>
+      <h2>Core Node.js Internals & Patterns</h2>
+      <p>The topics that separate competent from excellent Node.js developers — and that senior interviews always probe.</p>
+      <div class="ltime">⏱ 3–5 weeks · Heavy interview weight</div>
+    </div>
+
+    <!-- CONCEPT: Streams -->
+    <div class="concept-block" id="c-streams">
+      <div class="cb-header">
+        <div class="cb-num">04</div>
+        <div class="cb-icon">🌊</div>
+        <div class="cb-meta">
+          <h3>Streams — The Right Way to Move Data</h3>
+          <div class="cb-tags"><span class="ct">Readable</span><span class="ct">Writable</span><span class="ct">Duplex</span><span class="ct">Transform</span><span class="ct">pipe</span><span class="ct">backpressure</span></div>
+        </div>
+        <button class="cb-toggle" onclick="toggle(this)">Expand ↓</button>
+      </div>
+      <div class="cb-body">
+        <div class="cb-explain">
+          <h4>The Deep Explanation</h4>
+          <p>Streams are one of Node.js's most powerful — and most misunderstood — features. A stream is an abstract interface for <strong>working with streaming data</strong>: data that arrives or is sent piece by piece (in chunks) rather than all at once.</p>
+          <p>Without streams: reading a 1GB video file means loading 1GB into RAM before doing anything. With streams: you read 64KB at a time, process it, and free the memory before the next chunk arrives. Your app uses ~64KB of RAM instead of 1GB.</p>
+
+          <div class="stream-types-vis">
+            <div class="st-card st-read">
+              <div class="st-icon">📥</div>
+              <div class="st-name">Readable</div>
+              <div class="st-ex">fs.createReadStream(), http.IncomingMessage, process.stdin</div>
+            </div>
+            <div class="st-card st-write">
+              <div class="st-icon">📤</div>
+              <div class="st-name">Writable</div>
+              <div class="st-ex">fs.createWriteStream(), http.ServerResponse, process.stdout</div>
+            </div>
+            <div class="st-card st-duplex">
+              <div class="st-icon">↔️</div>
+              <div class="st-name">Duplex</div>
+              <div class="st-ex">net.Socket — can both read and write simultaneously</div>
+            </div>
+            <div class="st-card st-transform">
+              <div class="st-icon">🔄</div>
+              <div class="st-name">Transform</div>
+              <div class="st-ex">zlib.createGzip(), crypto.createCipher() — modify data as it passes through</div>
+            </div>
+          </div>
+
+          <div class="callout callout-warn">
+            <span class="co-icon">⚠️</span>
+            <div><strong>Backpressure</strong> — the #1 stream gotcha: If you read faster than you write, data piles up in memory. <code>pipe()</code> handles this automatically — it pauses the Readable when the Writable's buffer is full and resumes when it drains. If you manually handle stream events without respecting backpressure, you'll get memory leaks.</div>
+          </div>
+        </div>
+        <div class="cb-code-wrap">
+          <div class="code-tabs">
+            <button class="ctab active" onclick="switchTab(this,'st-basic')">Basic Usage</button>
+            <button class="ctab" onclick="switchTab(this,'st-transform')">Transform Stream</button>
+            <button class="ctab" onclick="switchTab(this,'st-http')">HTTP + Streams</button>
+          </div>
+          <div class="code-panel active" id="tab-st-basic">
+<pre><span class="ck">const</span> fs = <span class="cf">require</span>(<span class="cs">"fs"</span>);
+<span class="ck">const</span> zlib = <span class="cf">require</span>(<span class="cs">"zlib"</span>);
+
+<span class="cc">// ✅ Stream a file — constant memory usage</span>
+<span class="ck">const</span> readStream = fs.<span class="cm">createReadStream</span>(<span class="cs">"large-file.txt"</span>, {
+  highWaterMark: 64 * 1024, <span class="cc">// 64KB chunks (default)</span>
+  encoding: <span class="cs">"utf-8"</span>
+});
+
+readStream.<span class="cm">on</span>(<span class="cs">"data"</span>, (chunk) => {
+  <span class="cf">console</span>.<span class="cm">log</span>(<span class="cs">`Received <span class="cv">${chunk.length}</span> bytes`</span>);
+});
+readStream.<span class="cm">on</span>(<span class="cs">"end"</span>,   () => <span class="cf">console</span>.<span class="cm">log</span>(<span class="cs">"Done"</span>));
+readStream.<span class="cm">on</span>(<span class="cs">"error"</span>, (err) => <span class="cf">console</span>.<span class="cm">error</span>(err));
+
+<span class="cc">// pipe() — connects streams and handles backpressure</span>
+<span class="cc">// Read → Gzip compress → Write to file</span>
+fs.<span class="cm">createReadStream</span>(<span class="cs">"input.txt"</span>)
+  .<span class="cm">pipe</span>(zlib.<span class="cm">createGzip</span>())
+  .<span class="cm">pipe</span>(fs.<span class="cm">createWriteStream</span>(<span class="cs">"output.txt.gz"</span>))
+  .<span class="cm">on</span>(<span class="cs">"finish"</span>, () => <span class="cf">console</span>.<span class="cm">log</span>(<span class="cs">"Compressed!"</span>));</pre>
+          </div>
+          <div class="code-panel" id="tab-st-transform">
+<pre><span class="ck">const</span> { Transform } = <span class="cf">require</span>(<span class="cs">"stream"</span>);
+
+<span class="cc">// Custom Transform: uppercase every chunk</span>
+<span class="ck">const</span> upperCaseTransform = <span class="ck">new</span> <span class="cf">Transform</span>({
+  <span class="cm">transform</span>(chunk, encoding, callback) {
+    <span class="cc">// Push transformed data downstream</span>
+    <span class="ck">this</span>.<span class="cm">push</span>(chunk.<span class="cm">toString</span>().<span class="cm">toUpperCase</span>());
+    <span class="cf">callback</span>(); <span class="cc">// signal "I'm done with this chunk"</span>
+  }
+});
+
+<span class="cc">// Chain: read → uppercase → write</span>
+fs.<span class="cm">createReadStream</span>(<span class="cs">"input.txt"</span>)
+  .<span class="cm">pipe</span>(upperCaseTransform)
+  .<span class="cm">pipe</span>(fs.<span class="cm">createWriteStream</span>(<span class="cs">"output.txt"</span>));
+
+<span class="cc">// Real-world: JSON Lines transformer</span>
+<span class="ck">const</span> jsonLinesParser = <span class="ck">new</span> <span class="cf">Transform</span>({
+  objectMode: <span class="ck">true</span>, <span class="cc">// output objects, not buffers</span>
+  <span class="cm">transform</span>(chunk, enc, cb) {
+    chunk.<span class="cm">toString</span>().<span class="cm">split</span>(<span class="cs">"\n"</span>)
+      .<span class="cm">filter</span>(Boolean)
+      .<span class="cm">forEach</span>(line => <span class="ck">this</span>.<span class="cm">push</span>(JSON.<span class="cm">parse</span>(line)));
+    <span class="cf">cb</span>();
+  }
+});</pre>
+          </div>
+          <div class="code-panel" id="tab-st-http">
+<pre><span class="cc">// Streaming a large file as HTTP response</span>
+<span class="cc">// Without stream: reads entire file into memory, THEN sends</span>
+<span class="cc">// With stream: sends while reading — uses ~64KB RAM, not file size</span>
+
+app.<span class="cm">get</span>(<span class="cs">"/download"</span>, (req, res) => {
+  <span class="ck">const</span> filePath = <span class="cs">"./huge-dataset.csv"</span>;
+  <span class="ck">const</span> stat = fs.<span class="cm">statSync</span>(filePath);
+
+  res.<span class="cm">setHeader</span>(<span class="cs">"Content-Type"</span>, <span class="cs">"text/csv"</span>);
+  res.<span class="cm">setHeader</span>(<span class="cs">"Content-Length"</span>, stat.size);
+
+  <span class="cc">// pipe the file directly into the response stream</span>
+  fs.<span class="cm">createReadStream</span>(filePath).<span class="cm">pipe</span>(res);
+});
+
+<span class="cc">// Streaming from a database (cursor-based)</span>
+app.<span class="cm">get</span>(<span class="cs">"/users.ndjson"</span>, (req, res) => {
+  res.<span class="cm">setHeader</span>(<span class="cs">"Content-Type"</span>, <span class="cs">"application/x-ndjson"</span>);
+  <span class="ck">const</span> cursor = db.collection(<span class="cs">"users"</span>).<span class="cm">find</span>();
+  cursor.<span class="cm">on</span>(<span class="cs">"data"</span>, doc => res.<span class="cm">write</span>(JSON.<span class="cm">stringify</span>(doc) + <span class="cs">"\n"</span>));
+  cursor.<span class="cm">on</span>(<span class="cs">"end"</span>,  () => res.<span class="cm">end</span>());
+});</pre>
+          </div>
+        </div>
+        <div class="interview-box">
+          <div class="ib-title">🎯 Interview Questions — Streams</div>
+          <div class="iq-list">
+            <div class="iq">
+              <div class="iq-q">Q: What is backpressure in Node.js streams and why does it matter?</div>
+              <div class="iq-a">A: Backpressure occurs when a Readable stream produces data faster than a Writable can consume it. Without handling it, data accumulates in memory — a leak. <code>pipe()</code> automatically pauses the Readable when the Writable's internal buffer exceeds its <code>highWaterMark</code>, and resumes when it drains. If you bypass <code>pipe()</code>, you must manually check <code>writable.write()</code>'s return value and listen to the <code>'drain'</code> event.</div>
+            </div>
+            <div class="iq">
+              <div class="iq-q">Q: When would you use a Transform stream?</div>
+              <div class="iq-a">A: Transform streams sit between a Readable and Writable, modifying data as it passes through. Real uses: compressing data (zlib), encrypting/decrypting, parsing (CSV/JSON lines), logging, adding headers, format conversion. They're powerful because they keep memory constant regardless of data volume.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CONCEPT: Error Handling -->
+    <div class="concept-block" id="c-errors">
+      <div class="cb-header">
+        <div class="cb-num">05</div>
+        <div class="cb-icon">🛡️</div>
+        <div class="cb-meta">
+          <h3>Error Handling — A Complete Strategy</h3>
+          <div class="cb-tags"><span class="ct">try/catch</span><span class="ct">domains</span><span class="ct">process events</span><span class="ct">operational vs programmer errors</span></div>
+        </div>
+        <button class="cb-toggle" onclick="toggle(this)">Expand ↓</button>
+      </div>
+      <div class="cb-body">
+        <div class="cb-explain">
+          <h4>The Deep Explanation</h4>
+          <p>Error handling in Node.js is a layered strategy. There are two types of errors, and you handle them very differently:</p>
+          <p><strong>Operational errors</strong>: expected failures in a correct program. A network request times out, a file doesn't exist, a user sends invalid input, the database goes down. These should be caught and handled gracefully — return a 4xx/5xx, log them, maybe retry.</p>
+          <p><strong>Programmer errors</strong>: bugs in your code. Calling a function with the wrong type, accessing undefined, off-by-one. These should crash the process and be fixed — don't try to recover; the process is in an unknown state. Use a process manager (PM2) to restart automatically.</p>
+          <div class="callout callout-danger">
+            <span class="co-icon">🚨</span>
+            <div><strong>Never swallow errors silently:</strong> <code>catch(err) {}</code> is the most dangerous pattern in Node.js. It hides bugs and makes debugging impossible. At minimum: <code>catch(err) { console.error(err); throw err; }</code></div>
+          </div>
+        </div>
+        <div class="cb-code-wrap">
+          <div class="code-tabs">
+            <button class="ctab active" onclick="switchTab(this,'err-layers')">Error Layers</button>
+            <button class="ctab" onclick="switchTab(this,'err-express')">Express Strategy</button>
+            <button class="ctab" onclick="switchTab(this,'err-custom')">Custom Error Classes</button>
+          </div>
+          <div class="code-panel active" id="tab-err-layers">
+<pre><span class="cc">// Layer 1: try/catch for async functions</span>
+<span class="ck">async function</span> <span class="cf">getUser</span>(id) {
+  <span class="ck">try</span> {
+    <span class="ck">const</span> user = <span class="ck">await</span> db.<span class="cm">findById</span>(id);
+    <span class="ck">if</span> (!user) <span class="ck">throw new</span> NotFoundError(<span class="cs">`User <span class="cv">${id}</span> not found`</span>);
+    <span class="ck">return</span> user;
+  } <span class="ck">catch</span> (err) {
+    logger.<span class="cm">error</span>({ err, userId: id }, <span class="cs">"getUser failed"</span>);
+    <span class="ck">throw</span> err; <span class="cc">// always re-throw or handle completely</span>
+  }
+}
+
+<span class="cc">// Layer 2: Unhandled Promise rejections</span>
+process.<span class="cm">on</span>(<span class="cs">"unhandledRejection"</span>, (reason, promise) => {
+  logger.<span class="cm">fatal</span>({ reason }, <span class="cs">"Unhandled rejection"</span>);
+  process.<span class="cm">exit</span>(1); <span class="cc">// let PM2/Docker restart us</span>
+});
+
+<span class="cc">// Layer 3: Synchronous uncaught exceptions</span>
+process.<span class="cm">on</span>(<span class="cs">"uncaughtException"</span>, (err) => {
+  logger.<span class="cm">fatal</span>({ err }, <span class="cs">"Uncaught exception — shutting down"</span>);
+  <span class="cc">// Do NOT try to continue — state is unknown</span>
+  process.<span class="cm">exit</span>(1);
+});</pre>
+          </div>
+          <div class="code-panel" id="tab-err-express">
+<pre><span class="cc">// asyncHandler — wraps async routes to catch errors</span>
+<span class="ck">const</span> asyncHandler = (fn) => (req, res, next) =>
+  Promise.<span class="cm">resolve</span>(<span class="cf">fn</span>(req, res, next)).<span class="cm">catch</span>(next);
+
+<span class="cc">// ✅ Routes stay clean</span>
+app.<span class="cm">get</span>(<span class="cs">"/user/:id"</span>, <span class="cf">asyncHandler</span>(<span class="ck">async</span> (req, res) => {
+  <span class="ck">const</span> user = <span class="ck">await</span> <span class="cf">getUser</span>(req.params.id);
+  res.<span class="cm">json</span>(user);
+})); <span class="cc">// if getUser throws, it goes to next(err) → error middleware</span>
+
+<span class="cc">// Global Express error middleware (4 params — REQUIRED)</span>
+app.<span class="cm">use</span>((err, req, res, next) => {
+  <span class="ck">const</span> status = err.statusCode || 500;
+  <span class="ck">const</span> isOp = err <span class="ck">instanceof</span> OperationalError;
+
+  logger.<span class="cm">error</span>({ err, url: req.url, method: req.method });
+
+  res.<span class="cm">status</span>(status).<span class="cm">json</span>({
+    error: isOp ? err.message : <span class="cs">"Internal Server Error"</span>,
+    <span class="cc">// Never expose stack traces in production!</span>
+    ...(process.env.NODE_ENV !== <span class="cs">"production"</span> && { stack: err.stack })
+  });
+});</pre>
+          </div>
+          <div class="code-panel" id="tab-err-custom">
+<pre><span class="cc">// Custom error classes — know exactly what failed</span>
+<span class="ck">class</span> <span class="cf">AppError</span> <span class="ck">extends</span> Error {
+  <span class="cm">constructor</span>(message, statusCode, code) {
+    <span class="ck">super</span>(message);
+    <span class="ck">this</span>.statusCode = statusCode;
+    <span class="ck">this</span>.code = code;
+    <span class="ck">this</span>.isOperational = <span class="ck">true</span>; <span class="cc">// expected error</span>
+    Error.<span class="cm">captureStackTrace</span>(<span class="ck">this</span>, <span class="ck">this</span>.constructor);
+  }
+}
+
+<span class="ck">class</span> <span class="cf">NotFoundError</span> <span class="ck">extends</span> AppError {
+  <span class="cm">constructor</span>(msg) { <span class="ck">super</span>(msg, 404, <span class="cs">"NOT_FOUND"</span>); }
+}
+<span class="ck">class</span> <span class="cf">ValidationError</span> <span class="ck">extends</span> AppError {
+  <span class="cm">constructor</span>(msg) { <span class="ck">super</span>(msg, 400, <span class="cs">"VALIDATION_ERROR"</span>); }
+}
+<span class="ck">class</span> <span class="cf">UnauthorizedError</span> <span class="ck">extends</span> AppError {
+  <span class="cm">constructor</span>(msg = <span class="cs">"Unauthorized"</span>) { <span class="ck">super</span>(msg, 401, <span class="cs">"UNAUTHORIZED"</span>); }
+}
+
+<span class="cc">// Usage</span>
+<span class="ck">if</span> (!user) <span class="ck">throw new</span> <span class="cf">NotFoundError</span>(<span class="cs">`User <span class="cv">${id}</span> not found`</span>);
+<span class="ck">if</span> (!token) <span class="ck">throw new</span> <span class="cf">UnauthorizedError</span>();</pre>
+          </div>
+        </div>
+        <div class="interview-box">
+          <div class="ib-title">🎯 Interview Questions — Error Handling</div>
+          <div class="iq-list">
+            <div class="iq">
+              <div class="iq-q">Q: What's the difference between operational errors and programmer errors? How do you handle each?</div>
+              <div class="iq-a">A: Operational errors are expected in correct programs (network failure, invalid user input, file not found). Handle them gracefully — catch, log, return appropriate response. Programmer errors are bugs (TypeError, ReferenceError). Don't catch and continue — the process is in an unknown state. Crash and restart via PM2/Docker. Never catch all errors uniformly; distinguish between them.</div>
+            </div>
+            <div class="iq">
+              <div class="iq-q">Q: How do you handle errors in Express async route handlers?</div>
+              <div class="iq-a">A: Express doesn't catch async errors by default — if an async route throws, it hangs. You must either: (1) wrap with a higher-order <code>asyncHandler</code> utility that calls <code>next(err)</code>, or (2) manually catch and call <code>next(err)</code>. The error then flows to your 4-argument error middleware. Express 5 (RC) handles this automatically.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ====================== ADVANCED ====================== -->
+<section id="advanced" class="level-sec advanced-sec">
+  <div class="container">
+    <div class="level-head">
+      <div class="lbadge lb-red">🔥 Advanced</div>
+      <h2>Scaling, Performance & Production Patterns</h2>
+      <p>What separates senior engineers — deep internals, performance thinking, and real-world architectural decisions.</p>
+      <div class="ltime">⏱ 4–8 weeks · Senior engineer territory</div>
+    </div>
+
+    <!-- CONCEPT: Child Processes -->
+    <div class="concept-block" id="c-child">
+      <div class="cb-header">
+        <div class="cb-num">06</div>
+        <div class="cb-icon">🧵</div>
+        <div class="cb-meta">
+          <h3>Child Processes, Worker Threads & Cluster</h3>
+          <div class="cb-tags"><span class="ct">spawn</span><span class="ct">fork</span><span class="ct">exec</span><span class="ct">worker_threads</span><span class="ct">cluster</span><span class="ct">IPC</span></div>
+        </div>
+        <button class="cb-toggle" onclick="toggle(this)">Expand ↓</button>
+      </div>
+      <div class="cb-body">
+        <div class="cb-explain">
+          <h4>The Deep Explanation</h4>
+          <p>Node.js has three ways to run code in parallel, each for different use cases. Confusing them is a senior-level interview fail.</p>
+          <div class="compare-table">
+            <table>
+              <thead><tr><th>Method</th><th>Separate process?</th><th>Shared memory?</th><th>Best for</th></tr></thead>
+              <tbody>
+                <tr><td><code>child_process.exec/spawn</code></td><td>✅ Yes</td><td>❌ No</td><td>Running shell commands, external programs</td></tr>
+                <tr><td><code>child_process.fork</code></td><td>✅ Yes (Node.js)</td><td>❌ No (IPC only)</td><td>Spawning another Node.js script with messaging</td></tr>
+                <tr><td><code>worker_threads</code></td><td>❌ Same process</td><td>✅ SharedArrayBuffer</td><td>CPU-heavy JS work (image processing, ML)</td></tr>
+                <tr><td><code>cluster</code></td><td>✅ Yes (same port)</td><td>❌ No</td><td>Scaling HTTP server across all CPU cores</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="cb-code-wrap">
+          <div class="code-tabs">
+            <button class="ctab active" onclick="switchTab(this,'cp-spawn')">spawn / exec</button>
+            <button class="ctab" onclick="switchTab(this,'cp-worker')">Worker Threads</button>
+            <button class="ctab" onclick="switchTab(this,'cp-cluster')">Cluster</button>
+          </div>
+          <div class="code-panel active" id="tab-cp-spawn">
+<pre><span class="ck">const</span> { exec, spawn } = <span class="cf">require</span>(<span class="cs">"child_process"</span>);
+
+<span class="cc">// exec — buffers output, good for small results</span>
+<span class="cf">exec</span>(<span class="cs">"ls -la"</span>, (err, stdout, stderr) => {
+  <span class="ck">if</span> (err) <span class="ck">return</span> <span class="cf">console</span>.<span class="cm">error</span>(err);
+  <span class="cf">console</span>.<span class="cm">log</span>(stdout);
+});
+
+<span class="cc">// spawn — streams output, good for large/long-running</span>
+<span class="ck">const</span> ls = <span class="cf">spawn</span>(<span class="cs">"ls"</span>, [<span class="cs">"-la"</span>, <span class="cs">"/usr"</span>]);
+ls.stdout.<span class="cm">on</span>(<span class="cs">"data"</span>, data => process.stdout.<span class="cm">write</span>(data));
+ls.stderr.<span class="cm">on</span>(<span class="cs">"data"</span>, data => <span class="cf">console</span>.<span class="cm">error</span>(data.<span class="cm">toString</span>()));
+ls.<span class="cm">on</span>(<span class="cs">"close"</span>, code => <span class="cf">console</span>.<span class="cm">log</span>(<span class="cs">`Exited: <span class="cv">${code}</span>`</span>));
+
+<span class="cc">// ⚠️ NEVER use exec with user input — shell injection risk!</span>
+<span class="cc">// exec(`ls ${userInput}`)  ← dangerous if userInput = "; rm -rf /"</span>
+<span class="cc">// spawn("ls", [userInput])  ← safe — args are never shell-interpreted</span></pre>
+          </div>
+          <div class="code-panel" id="tab-cp-worker">
+<pre><span class="cc">// main.js — offload CPU work to a thread</span>
+<span class="ck">const</span> { Worker, isMainThread, parentPort, workerData }
+  = <span class="cf">require</span>(<span class="cs">"worker_threads"</span>);
+
+<span class="ck">if</span> (isMainThread) {
+  <span class="cc">// Main thread — runs your web server</span>
+  <span class="ck">const</span> runTask = (data) => <span class="ck">new</span> Promise((resolve, reject) => {
+    <span class="ck">const</span> w = <span class="ck">new</span> <span class="cf">Worker</span>(__filename, { workerData: data });
+    w.<span class="cm">on</span>(<span class="cs">"message"</span>, resolve);
+    w.<span class="cm">on</span>(<span class="cs">"error"</span>, reject);
+    w.<span class="cm">on</span>(<span class="cs">"exit"</span>, code => {
+      <span class="ck">if</span> (code !== 0) <span class="cf">reject</span>(<span class="ck">new</span> Error(<span class="cs">`Worker exited: <span class="cv">${code}</span>`</span>));
+    });
+  });
+
+  <span class="cc">// Event loop NOT blocked while worker computes</span>
+  app.<span class="cm">get</span>(<span class="cs">"/compute"</span>, <span class="ck">async</span> (req, res) => {
+    <span class="ck">const</span> result = <span class="ck">await</span> <span class="cf">runTask</span>({ n: 45 });
+    res.<span class="cm">json</span>({ result });
+  });
+} <span class="ck">else</span> {
+  <span class="cc">// Worker thread — runs CPU-heavy computation</span>
+  <span class="ck">function</span> <span class="cf">fib</span>(n) { <span class="ck">return</span> n < 2 ? n : <span class="cf">fib</span>(n-1) + <span class="cf">fib</span>(n-2); }
+  parentPort.<span class="cm">postMessage</span>(<span class="cf">fib</span>(workerData.n));
+}</pre>
+          </div>
+          <div class="code-panel" id="tab-cp-cluster">
+<pre><span class="ck">const</span> cluster = <span class="cf">require</span>(<span class="cs">"cluster"</span>);
+<span class="ck">const</span> http    = <span class="cf">require</span>(<span class="cs">"http"</span>);
+<span class="ck">const</span> os      = <span class="cf">require</span>(<span class="cs">"os"</span>);
+
+<span class="ck">if</span> (cluster.isPrimary) {
+  <span class="ck">const</span> numCPUs = os.<span class="cm">cpus</span>().length; <span class="cc">// e.g. 8</span>
+  <span class="cf">console</span>.<span class="cm">log</span>(<span class="cs">`Primary <span class="cv">${process.pid}</span> forking <span class="cv">${numCPUs}</span> workers`</span>);
+
+  <span class="ck">for</span> (<span class="ck">let</span> i = 0; i < numCPUs; i++) cluster.<span class="cm">fork</span>();
+
+  cluster.<span class="cm">on</span>(<span class="cs">"exit"</span>, (worker, code) => {
+    <span class="cf">console</span>.<span class="cm">log</span>(<span class="cs">`Worker <span class="cv">${worker.process.pid}</span> died (code <span class="cv">${code}</span>). Restarting.`</span>);
+    cluster.<span class="cm">fork</span>(); <span class="cc">// auto-restart crashed workers</span>
+  });
+} <span class="ck">else</span> {
+  <span class="cc">// Each worker is a full Node.js process with its own event loop</span>
+  http.<span class="cm">createServer</span>((req, res) => {
+    res.<span class="cm">end</span>(<span class="cs">`Worker <span class="cv">${process.pid}</span> handled this\n`</span>);
+  }).<span class="cm">listen</span>(3000);
+  <span class="cc">// OS load-balances incoming connections across workers</span>
+  <span class="cc">// PM2 alternative: pm2 start app.js -i max</span>
+}</pre>
+          </div>
+        </div>
+        <div class="interview-box">
+          <div class="ib-title">🎯 Interview Questions — Concurrency</div>
+          <div class="iq-list">
+            <div class="iq">
+              <div class="iq-q">Q: What's the difference between cluster and worker_threads?</div>
+              <div class="iq-a">A: <code>cluster</code> creates separate OS processes — each has its own memory, event loop, and V8 instance. They communicate via IPC. Best for scaling an HTTP server across CPU cores. <code>worker_threads</code> creates threads within the same process — they can share memory via <code>SharedArrayBuffer</code>. Best for CPU-intensive tasks within a single request (image processing, ML inference). Key: cluster = horizontal scaling of requests; worker_threads = vertical scaling of a single task.</div>
+            </div>
+            <div class="iq">
+              <div class="iq-q">Q: What is spawn vs exec vs fork in child_process?</div>
+              <div class="iq-a">A: <code>exec</code> runs a shell command and buffers all output — easy but dangerous with user input (shell injection) and bad for large output. <code>spawn</code> runs a command directly without a shell and streams output — safer and memory-efficient. <code>fork</code> is like spawn but specifically for spawning another Node.js file with built-in IPC messaging between parent and child.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CONCEPT: Memory & Performance -->
+    <div class="concept-block" id="c-perf">
+      <div class="cb-header">
+        <div class="cb-num">07</div>
+        <div class="cb-icon">📊</div>
+        <div class="cb-meta">
+          <h3>Memory Management & Performance</h3>
+          <div class="cb-tags"><span class="ct">V8 Heap</span><span class="ct">GC</span><span class="ct">memory leaks</span><span class="ct">profiling</span><span class="ct">--max-old-space-size</span></div>
+        </div>
+        <button class="cb-toggle" onclick="toggle(this)">Expand ↓</button>
+      </div>
+      <div class="cb-body">
+        <div class="cb-explain">
+          <h4>The Deep Explanation</h4>
+          <p>V8 divides memory into two areas: the <strong>stack</strong> (primitive values, references) and the <strong>heap</strong> (objects, closures, buffers). The garbage collector (GC) automatically frees heap objects with no references — but it has to <strong>stop-the-world</strong> to do it, causing latency spikes.</p>
+          <p>Memory leaks in Node.js happen when you hold references to objects longer than needed. The GC can't free them even though you're "done" with them. Common culprits: global variables, event listeners not removed, closures holding large data, caches with no eviction policy.</p>
+          <div class="callout callout-warn">
+            <span class="co-icon">⚠️</span>
+            <div><strong>Default heap size is ~1.5GB</strong>. In production, set it explicitly: <code>node --max-old-space-size=4096 app.js</code>. Monitor with <code>process.memoryUsage()</code>. Profile with Chrome DevTools or <code>node --inspect</code>.</div>
+          </div>
+        </div>
+        <div class="cb-code-wrap">
+          <div class="code-tabs">
+            <button class="ctab active" onclick="switchTab(this,'mem-leaks')">Common Leaks</button>
+            <button class="ctab" onclick="switchTab(this,'mem-monitor')">Monitoring</button>
+            <button class="ctab" onclick="switchTab(this,'mem-fix')">Fixes</button>
+          </div>
+          <div class="code-panel active" id="tab-mem-leaks">
+<pre><span class="cc">// ❌ Leak 1: Global variable accumulation</span>
+<span class="ck">const</span> cache = {};
+app.<span class="cm">get</span>(<span class="cs">"/data"</span>, (req, res) => {
+  cache[req.query.id] = fetchExpensiveData(); <span class="cc">// NEVER evicted!</span>
+});
+
+<span class="cc">// ❌ Leak 2: Event listener not removed</span>
+<span class="ck">function</span> <span class="cf">processRequest</span>(req) {
+  process.<span class="cm">on</span>(<span class="cs">"message"</span>, handleMessage); <span class="cc">// adds listener every call!</span>
+  <span class="cc">// Fixed: process.once() or remove listener when done</span>
+}
+
+<span class="cc">// ❌ Leak 3: Closure holding large data</span>
+<span class="ck">function</span> <span class="cf">makeAdder</span>() {
+  <span class="ck">const</span> hugeArray = <span class="ck">new</span> Array(1_000_000).<span class="cm">fill</span>(<span class="cs">"data"</span>);
+  <span class="ck">return</span> (x) => x + hugeArray.length; <span class="cc">// hugeArray can't be GC'd</span>
+}
+
+<span class="cc">// ❌ Leak 4: Timers not cleared</span>
+<span class="ck">function</span> <span class="cf">startPolling</span>(emitter) {
+  <span class="ck">const</span> id = <span class="cf">setInterval</span>(() => {
+    emitter.<span class="cm">emit</span>(<span class="cs">"poll"</span>); <span class="cc">// holds ref to emitter forever</span>
+  }, 1000);
+  <span class="cc">// Must return id and clearInterval when done!</span>
+}</pre>
+          </div>
+          <div class="code-panel" id="tab-mem-monitor">
+<pre><span class="cc">// Check memory usage programmatically</span>
+<span class="ck">const</span> used = process.<span class="cm">memoryUsage</span>();
+<span class="cf">console</span>.<span class="cm">log</span>({
+  heapUsed:  (used.heapUsed  / 1024 / 1024).<span class="cm">toFixed</span>(2) + <span class="cs">" MB"</span>,
+  heapTotal: (used.heapTotal / 1024 / 1024).<span class="cm">toFixed</span>(2) + <span class="cs">" MB"</span>,
+  rss:       (used.rss       / 1024 / 1024).<span class="cm">toFixed</span>(2) + <span class="cs">" MB"</span>,
+  external:  (used.external  / 1024 / 1024).<span class="cm">toFixed</span>(2) + <span class="cs">" MB"</span>,
+});
+<span class="cc">// heapUsed  = JS objects in use
+// heapTotal = total heap allocated
+// rss       = Resident Set Size (entire process memory)
+// external  = C++ objects linked to JS (Buffers)</span>
+
+<span class="cc">// Monitor periodically — alert if heap grows too fast</span>
+<span class="cf">setInterval</span>(() => {
+  <span class="ck">const</span> { heapUsed } = process.<span class="cm">memoryUsage</span>();
+  <span class="ck">if</span> (heapUsed > 500 * 1024 * 1024) {
+    logger.<span class="cm">warn</span>(<span class="cs">"High heap usage!"</span>, { heapMB: heapUsed/1024/1024 });
+  }
+}, 30_000);
+
+<span class="cc">// Debug with Chrome DevTools:
+// $ node --inspect app.js
+// Open chrome://inspect → heap snapshots → compare over time</span></pre>
+          </div>
+          <div class="code-panel" id="tab-mem-fix">
+<pre><span class="cc">// ✅ Fix 1: Bounded cache with LRU eviction</span>
+<span class="ck">const</span> LRU = <span class="cf">require</span>(<span class="cs">"lru-cache"</span>);
+<span class="ck">const</span> cache = <span class="ck">new</span> <span class="cf">LRU</span>({ max: 500, ttl: 1000 * 60 * 5 }); <span class="cc">// 500 items, 5min TTL</span>
+
+<span class="cc">// ✅ Fix 2: Remove event listeners</span>
+<span class="ck">const</span> handler = () => { <span class="cc">/* ... */</span> };
+emitter.<span class="cm">on</span>(<span class="cs">"event"</span>, handler);
+<span class="cc">// later...</span>
+emitter.<span class="cm">off</span>(<span class="cs">"event"</span>, handler); <span class="cc">// or: emitter.removeListener</span>
+<span class="cc">// Or use once() for fire-once handlers</span>
+emitter.<span class="cm">once</span>(<span class="cs">"event"</span>, handler); <span class="cc">// auto-removed after first call</span>
+
+<span class="cc">// ✅ Fix 3: WeakMap for private data (GC-friendly)</span>
+<span class="ck">const</span> privateData = <span class="ck">new</span> WeakMap();
+<span class="ck">class</span> <span class="cf">MyClass</span> {
+  <span class="cm">constructor</span>() { privateData.<span class="cm">set</span>(<span class="ck">this</span>, { secret: <span class="cs">"hidden"</span> }); }
+  <span class="cm">getSecret</span>() { <span class="ck">return</span> privateData.<span class="cm">get</span>(<span class="ck">this</span>).secret; }
+  <span class="cc">// When `this` is GC'd, WeakMap entry is automatically removed</span>
+}</pre>
+          </div>
+        </div>
+        <div class="interview-box">
+          <div class="ib-title">🎯 Interview Questions — Memory & Performance</div>
+          <div class="iq-list">
+            <div class="iq">
+              <div class="iq-q">Q: How do you diagnose a memory leak in a production Node.js application?</div>
+              <div class="iq-a">A: (1) Monitor <code>process.memoryUsage().heapUsed</code> over time — if it grows steadily without leveling off, you have a leak. (2) Take heap snapshots using <code>--inspect</code> and Chrome DevTools: take snapshot 1, reproduce the leak, take snapshot 2, compare — the objects growing are your culprits. (3) Use tools like <code>clinic.js</code>, <code>heapdump</code>, or <code>memwatch-next</code> for production. Common culprits: unbounded caches, unremoved event listeners, closures holding large data.</div>
+            </div>
+            <div class="iq">
+              <div class="iq-q">Q: What causes stop-the-world GC pauses in Node.js?</div>
+              <div class="iq-a">A: V8's garbage collector needs to pause JS execution to safely traverse and free objects in the old generation heap. Large heap sizes mean longer GC pauses. Mitigation: keep heap small (evict caches), use streaming to avoid large allocations, use <code>Buffer</code> for binary data (outside V8 heap), and tune GC with flags like <code>--max-old-space-size</code>.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ====================== INTERVIEW PREP ====================== -->
+<section id="interview" class="level-sec interview-sec">
+  <div class="container">
+    <div class="level-head">
+      <div class="lbadge lb-purple">🎯 Interview Prep</div>
+      <h2>The Questions That Actually Get Asked</h2>
+      <p>Curated from real interviews at top tech companies. Answers you should be able to say out loud, not just read.</p>
+    </div>
+
+    <div class="iq-categories">
+
+      <div class="iqc">
+        <div class="iqc-title">⚡ Quick Fire — Junior Level</div>
+        <div class="iq-list">
+          <div class="iq">
+            <div class="iq-q">What is Node.js and why is it not a programming language?</div>
+            <div class="iq-a">Node.js is a <strong>JavaScript runtime environment</strong> — it's a platform that lets you run JavaScript outside the browser, built on Chrome's V8 engine. JavaScript is the language; Node.js provides the environment (file system, network, OS access) that browsers don't expose.</div>
+          </div>
+          <div class="iq">
+            <div class="iq-q">What is the difference between <code>require()</code> and <code>import</code>?</div>
+            <div class="iq-a"><code>require()</code> is CommonJS — synchronous, cached, available everywhere. <code>import</code> is ESM — statically analyzed at parse time, async-capable (top-level await), supports tree-shaking. ESM is the JavaScript standard; CJS is Node.js's historical system.</div>
+          </div>
+          <div class="iq">
+            <div class="iq-q">What is <code>package.json</code> and what is <code>package-lock.json</code>?</div>
+            <div class="iq-a"><code>package.json</code> declares your project's metadata, dependencies (with semver ranges), and scripts. <code>package-lock.json</code> is auto-generated and locks the exact versions of every installed package and its transitive dependencies — ensures reproducible installs across machines. Always commit it.</div>
+          </div>
+          <div class="iq">
+            <div class="iq-q">What is the difference between <code>dependencies</code> and <code>devDependencies</code>?</div>
+            <div class="iq-a"><code>dependencies</code> are packages needed at runtime (express, lodash). <code>devDependencies</code> are only needed during development/testing (jest, eslint, nodemon). Running <code>npm install --production</code> skips devDependencies — important for smaller Docker images.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="iqc">
+        <div class="iqc-title">🔥 Deep Dive — Mid/Senior Level</div>
+        <div class="iq-list">
+          <div class="iq">
+            <div class="iq-q">Explain the Node.js Event Loop phases in order.</div>
+            <div class="iq-a">6 phases in order: (1) <strong>Timers</strong> — executes setTimeout/setInterval callbacks. (2) <strong>Pending Callbacks</strong> — I/O callbacks from previous loop. (3) <strong>Idle/Prepare</strong> — internal use. (4) <strong>Poll</strong> — retrieves new I/O events; blocks here if nothing else is pending. (5) <strong>Check</strong> — executes setImmediate(). (6) <strong>Close Callbacks</strong> — socket.on('close'). Between each phase: drains process.nextTick() queue, then Promise microtask queue.</div>
+          </div>
+          <div class="iq">
+            <div class="iq-q">How does Node.js achieve non-blocking I/O if JavaScript is single-threaded?</div>
+            <div class="iq-a">Node.js delegates I/O operations to <strong>libuv</strong>, which has a thread pool (default 4 threads) and uses OS-level async APIs (epoll on Linux, kqueue on macOS, IOCP on Windows). When I/O completes, libuv puts the callback on the Event Loop queue. The JS thread never waits — it processes other callbacks until the I/O result is ready.</div>
+          </div>
+          <div class="iq">
+            <div class="iq-q">What is backpressure in streams, and how do you handle it?</div>
+            <div class="iq-a">Backpressure is when a consumer (Writable) is slower than a producer (Readable). Unhandled, data buffers in memory → heap growth → OOM crash. Solution: use <code>pipe()</code> which automatically pauses the Readable when <code>writable.write()</code> returns false, and resumes on the <code>'drain'</code> event. For manual handling: check write's return value and listen to drain.</div>
+          </div>
+          <div class="iq">
+            <div class="iq-q">How would you structure a Node.js application for production?</div>
+            <div class="iq-a">Layered architecture: (1) <strong>Routes</strong> — HTTP interface only, no business logic. (2) <strong>Controllers</strong> — validate input, call services. (3) <strong>Services</strong> — business logic, framework-agnostic. (4) <strong>Repositories/DAOs</strong> — data access layer. Plus: centralized error handling, environment config via dotenv, structured logging (pino/winston), health check endpoints, graceful shutdown handler, and cluster/PM2 for production scaling.</div>
+          </div>
+          <div class="iq">
+            <div class="iq-q">What is a memory leak in Node.js and how do you find one?</div>
+            <div class="iq-a">A memory leak is when objects are retained in memory longer than needed because references are held. Common causes: globals, unbounded caches, unremoved event listeners. Detection: monitor heapUsed over time with process.memoryUsage(). Debug: run with <code>--inspect</code>, take heap snapshots in Chrome DevTools, compare before/after — growing object types are the source. Tools: clinic.js, heapdump npm package.</div>
+          </div>
+          <div class="iq">
+            <div class="iq-q">What is graceful shutdown and why does it matter?</div>
+            <div class="iq-a">Graceful shutdown means: on SIGTERM/SIGINT, stop accepting new connections, finish in-flight requests, close DB connections and cleanup, then exit. Without it, killing the process drops active requests → errors for users. Implementation: listen to SIGTERM, call <code>server.close()</code>, wait for connections to drain, then exit. PM2 sends SIGINT before force-killing — your app has a window to shut down cleanly.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="iqc">
+        <div class="iqc-title">🧠 System Design Thinking</div>
+        <div class="iq-list">
+          <div class="iq">
+            <div class="iq-q">When would you NOT use Node.js?</div>
+            <div class="iq-a">Node.js is poor for: (1) CPU-intensive workloads (image/video processing, ML training, complex computation) — single thread gets blocked. (2) Applications needing multi-threaded CPU parallelism — Go or Java/Kotlin are better. (3) Heavy computation per request — Python/C++ may be faster. Node.js shines at: I/O-bound tasks, real-time apps, microservices, API gateways, BFF (Backend for Frontend) layers.</div>
+          </div>
+          <div class="iq">
+            <div class="iq-q">How would you handle database connections in a clustered Node.js app?</div>
+            <div class="iq-a">Each cluster worker is a separate process, so each creates its own connection pool. This means 8 workers × 10 pool connections = 80 DB connections. Mitigation: (1) Use a connection pooler like PgBouncer between Node and Postgres. (2) Reduce pool size per worker. (3) Use a centralized connection manager / service. For worker_threads, connections can potentially be shared via SharedArrayBuffer but it's complex — generally don't share DB connections across threads.</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- CHEAT SHEET -->
+    <div class="cheat-sheet">
+      <div class="cs-title">📋 Quick Reference — Execution Order Cheat Sheet</div>
+      <div class="cs-grid">
+        <div class="cs-item cs-sync"><div class="cs-rank">1st</div><div class="cs-name">Synchronous code</div><div class="cs-ex">console.log, assignments, loops</div></div>
+        <div class="cs-item cs-nexttick"><div class="cs-rank">2nd</div><div class="cs-name">process.nextTick()</div><div class="cs-ex">Before Promises, before I/O</div></div>
+        <div class="cs-item cs-promise"><div class="cs-rank">3rd</div><div class="cs-name">Promise .then() / await</div><div class="cs-ex">Microtask queue</div></div>
+        <div class="cs-item cs-immediate"><div class="cs-rank">4th</div><div class="cs-name">setImmediate()</div><div class="cs-ex">Check phase — after I/O</div></div>
+        <div class="cs-item cs-timeout"><div class="cs-rank">5th</div><div class="cs-name">setTimeout(fn, 0)</div><div class="cs-ex">Timers phase — after check</div></div>
+        <div class="cs-item cs-io"><div class="cs-rank">Any</div><div class="cs-name">I/O callbacks</div><div class="cs-ex">When libuv reports completion</div></div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ====================== YOUTUBE VIDEOS ====================== -->
+<section id="videos" class="videos-sec">
+  <div class="container">
+
+    <!-- VIDEO CARDS -->
+    <div class="videos-grid">
+
+      <!-- Video 1 -->
+      <div class="video-card vc-beginner">
+        <div class="vc-level-tag">🧠 Core Concept</div>
+        <a class="vc-thumb-wrap" href="https://www.youtube.com/watch?v=os7KcmJvtN4" target="_blank" rel="noopener noreferrer" aria-label="Watch: The Genius Behind Node.js Single Thread Model">
+          <img
+            src="https://img.youtube.com/vi/os7KcmJvtN4/hqdefault.jpg"
+            alt="The Genius Behind Node.js Single Thread Model thumbnail"
+            class="vc-thumb"
+            loading="lazy"
+          />
+          <div class="vc-play-overlay">
+            <span class="vc-play-btn">▶</span>
+          </div>
+          <div class="vc-duration">~15 min</div>
+        </a>
+        <div class="vc-content">
+          <h3 class="vc-title">The Genius Behind Node.js Single Thread Model 🚀</h3>
+          <div class="vc-meta">
+            <span class="vc-creator">ByteMonk</span>
+            <span class="vc-dot">·</span>
+            <span class="vc-year">2025</span>
+          </div>
+          <p class="vc-desc">The clearest visual explanation of how Node.js handles thousands of concurrent connections on a single thread. Covers the V8 engine, libuv thread pool, and the magic of non-blocking I/O. Watch this <em>before</em> reading the Event Loop section.</p>
+          <div class="vc-pairs">
+            <span class="vc-pair-label">Pairs with:</span>
+            <a href="#c-eventloop" onclick="openBlock('c-eventloop')" class="vc-pair-link">Event Loop concept ↑</a>
+          </div>
+          <a class="vc-watch-btn" href="https://www.youtube.com/watch?v=os7KcmJvtN4" target="_blank" rel="noopener noreferrer">
+            <span class="yt-icon-sm">▶</span> Watch on YouTube
+          </a>
+        </div>
+      </div>
+
+      <!-- Video 2 -->
+      <div class="video-card vc-intermediate">
+        <div class="vc-level-tag">⚡ Intermediate</div>
+        <a class="vc-thumb-wrap" href="https://www.youtube.com/watch?v=Vej327jN8WI" target="_blank" rel="noopener noreferrer" aria-label="Watch Node.js video by Piyush Garg">
+          <img
+            src="https://img.youtube.com/vi/Vej327jN8WI/hqdefault.jpg"
+            alt="Node.js deep dive video thumbnail"
+            class="vc-thumb"
+            loading="lazy"
+          />
+          <div class="vc-play-overlay">
+            <span class="vc-play-btn">▶</span>
+          </div>
+          <div class="vc-duration">Watch →</div>
+        </a>
+        <div class="vc-content">
+          <h3 class="vc-title">Worker Threads in Node.js: The Secret to High-Performance Backends 🔥</h3>
+          <div class="vc-meta">
+            <span class="vc-creator">ByteMonk</span>
+            <span class="vc-dot">·</span>
+            <span class="vc-channel">@ByteMonk</span>
+          </div>
+          <p class="vc-desc">An in-depth walkthrough for worker threads in Node.js. Great companion video for the intermediate section of this guide.</p>
+          <div class="vc-pairs">
+            <span class="vc-pair-label">Pairs with:</span>
+            <a href="#intermediate" class="vc-pair-link">Intermediate section ↑</a>
+          </div>
+          <a class="vc-watch-btn" href="https://www.youtube.com/watch?v=Vej327jN8WI" target="_blank" rel="noopener noreferrer">
+            <span class="yt-icon-sm">▶</span> Watch on YouTube
+          </a>
+        </div>
+      </div>
+
+      <!-- Video 3 -->
+      <div class="video-card vc-advanced">
+        <div class="vc-level-tag">🔥 Advanced</div>
+        <a class="vc-thumb-wrap" href="https://www.youtube.com/watch?v=eiC58R16hb8" target="_blank" rel="noopener noreferrer" aria-label="Watch Node.js advanced video by Piyush Garg">
+          <img
+            src="https://img.youtube.com/vi/eiC58R16hb8/hqdefault.jpg"
+            alt="Node.js advanced concepts video thumbnail"
+            class="vc-thumb"
+            loading="lazy"
+          />
+          <div class="vc-play-overlay">
+            <span class="vc-play-btn">▶</span>
+          </div>
+          <div class="vc-duration">Watch →</div>
+        </a>
+        <div class="vc-content">
+          <h3 class="vc-title">What the heck is the event loop anyway? | Philip Roberts | JSConf EU</h3>
+          <div class="vc-meta">
+            <span class="vc-creator">Philip Roberts</span>
+            <span class="vc-dot">·</span>
+            <span class="vc-channel">@philip_roberts</span>
+          </div>
+          <p class="vc-desc">JavaScript programmers like to use words like, “event-loop”, “non-blocking”, “callback”, “asynchronous”, “single-threaded” and “concurrency”.We say things like “don’t block the event loop”, “make sure your code runs at 60 frames-per-second”, “well of course, it won’t work, that function is an asynchronous callback!”</p>
+          <div class="vc-pairs">
+            <span class="vc-pair-label">Pairs with:</span>
+            <a href="#advanced" class="vc-pair-link">Advanced section ↑</a>
+          </div>
+          <a class="vc-watch-btn" href="https://www.youtube.com/watch?v=8aGhZQkoFbQ" target="_blank" rel="noopener noreferrer">
+            <span class="yt-icon-sm">▶</span> Watch on YouTube
+          </a>
+        </div>
+      </div>
+
+    </div><!-- /videos-grid -->
+
+  </div>
+</section>
+
+<!-- ====================== RESOURCES ====================== -->
+<section class="resources-sec">
+  <div class="container">
+    <div class="sec-label">Keep Going</div>
+    <h2 class="sec-title">Curated Next Steps</h2>
+    <div class="res-grid">
+      <a class="res-card" href="https://nodejs.org/learn" target="_blank">
+        <div class="rc-icon">📚</div><div class="rc-title">Official Node.js Learn</div>
+        <div class="rc-desc">The authoritative source, maintained by the Node.js team. Every topic from this guide links here.</div>
+        <div class="rc-url">nodejs.org/learn →</div>
+      </a>
+      <a class="res-card" href="https://roadmap.sh/nodejs" target="_blank">
+        <div class="rc-icon">🗺️</div><div class="rc-title">Node.js Roadmap 2026</div>
+        <div class="rc-desc">Visual skill map of everything to learn, in what order, to become a professional Node.js developer.</div>
+        <div class="rc-url">roadmap.sh/nodejs →</div>
+      </a>
+      <a class="res-card" href="https://nodejs.org/learn/asynchronous-work/event-loop-timers-and-nexttick" target="_blank">
+        <div class="rc-icon">🔁</div><div class="rc-title">Event Loop Deep Dive</div>
+        <div class="rc-desc">Official in-depth article on event loop phases, timers, process.nextTick — bookmark this.</div>
+        <div class="rc-url">nodejs.org →</div>
+      </a>
+      <a class="res-card" href="https://nodejs.org/learn/getting-started/security-best-practices" target="_blank">
+        <div class="rc-icon">🔐</div><div class="rc-title">Security Best Practices</div>
+        <div class="rc-desc">Official Node.js security guide covering input validation, dependency auditing, and production hardening.</div>
+        <div class="rc-url">nodejs.org →</div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="container footer-inner">
+    <div class="footer-logo"><span>⬡ Node<span class="green">Path</span></span></div>
+    <p>Deep Node.js guide for developers who want to actually understand it.</p>
+    <div class="footer-credits">
+      <span class="fc-label">Sources &amp; Credits:</span>
+      <a href="https://nodejs.org/learn" target="_blank">nodejs.org/learn</a>
+      <span class="fc-dot">·</span>
+      <a href="https://roadmap.sh/nodejs" target="_blank">roadmap.sh</a>
+      <span class="fc-dot">·</span>
+      <a href="https://www.youtube.com/@piyushgargdev" target="_blank">Piyush Garg (@piyushgargdev)</a>
+    </div>
+  </div>
+</footer>
+
+<script src="app.js"></script>
+</body>
+</html>
